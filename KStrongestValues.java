@@ -1,46 +1,46 @@
-import java.util.Arrays;
+import java.util.*;
 
-public class KStrongestValues {
-    public static int[] getStrongest(int[] arr, int k) {
-        int n = arr.length;
-        int[] sorted = arr.clone();
-        Arrays.sort(sorted);
-        int m = sorted[(n - 1) / 2];
+class BrowserHistory {
+    private final List<String> history;
+    private int curr;
 
-        int l = 0, r = n - 1;
-        int[] res = new int[k];
-        for (int i = 0; i < k; i++) {
-            int leftDiff = Math.abs(sorted[l] - m);
-            int rightDiff = Math.abs(sorted[r] - m);
-            if (rightDiff > leftDiff || (rightDiff == leftDiff && sorted[r] > sorted[l])) {
-                res[i] = sorted[r--];
-            } else {
-                res[i] = sorted[l++];
-            }
-        }
-        return res;
+    public BrowserHistory(String homepage) {
+        history = new ArrayList<>();
+        history.add(homepage);
+        curr = 0;
     }
-
-    private static void printArray(int[] a) {
-        System.out.print("[");
-        for (int i = 0; i < a.length; i++) {
-            System.out.print(a[i]);
-            if (i < a.length - 1) System.out.print(", ");
+    
+    public void visit(String url) {
+        // drop any forward history
+        while (history.size() > curr + 1) {
+            history.remove(history.size() - 1);
         }
-        System.out.println("]");
+        history.add(url);
+        curr++;
     }
-
-    public static void main(String[] args) {
-        int[] arr1 = {1, 2, 3, 4, 5};
-        int k1 = 2;
-        System.out.print("Input: "); printArray(arr1);
-        System.out.print("k = " + k1 + " -> Output: ");
-        printArray(getStrongest(arr1, k1)); // expected [5,1]
-
-        int[] arr2 = {6, -3, 7, 2, 11};
-        int k2 = 3;
-        System.out.print("Input: "); printArray(arr2);
-        System.out.print("k = " + k2 + " -> Output: ");
-        printArray(getStrongest(arr2, k2));
+    
+    public String back(int steps) {
+        curr = Math.max(0, curr - steps);
+        return history.get(curr);
+    }
+    
+    public String forward(int steps) {
+        curr = Math.min(history.size() - 1, curr + steps);
+        return history.get(curr);
     }
 }
+
+/**
+ * Example usage:
+ * BrowserHistory browserHistory = new BrowserHistory("leetcode.com");
+ * browserHistory.visit("google.com");
+ * browserHistory.visit("facebook.com");
+ * browserHistory.visit("youtube.com");
+ * System.out.println(browserHistory.back(1));    // "facebook.com"
+ * System.out.println(browserHistory.back(1));    // "google.com"
+ * System.out.println(browserHistory.forward(1)); // "facebook.com"
+ * browserHistory.visit("linkedin.com");
+ * System.out.println(browserHistory.forward(2)); // "linkedin.com"
+ * System.out.println(browserHistory.back(2));    // "google.com"
+ * System.out.println(browserHistory.back(7));    // "leetcode.com"
+ */
